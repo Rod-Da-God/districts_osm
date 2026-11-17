@@ -11,11 +11,14 @@ from loguru import logger
 from config import settings
 from config.log_trace import add_trace_id
 
+
 libs_to_mute: list[str] = []
 
 
 def mute_loggers(
-    names: list[str], level: int = logging.CRITICAL, clear_handlers: bool = True
+    names: list[str],
+    level: int = logging.CRITICAL,
+    clear_handlers: bool = True,
 ):
     """
     Красиво и централизованно заглушает логи указанных библиотек.
@@ -68,7 +71,9 @@ def format_exception_with_filtered_traceback(
         try:
             rel_path = file_path.relative_to(project_root)
             rel_str = str(rel_path).lower()
-            first_part = rel_str.split(os.sep)[0] if os.sep in rel_str else rel_str
+            first_part = (
+                rel_str.split(os.sep)[0] if os.sep in rel_str else rel_str
+            )
             if first_part in exclude_starts:
                 continue
             filtered_frames.append(frame)
@@ -146,7 +151,9 @@ class InterceptHandler(logging.Handler):
 
         logger.opt(depth=depth).log(level, message)
         if record.levelno >= logging.CRITICAL:
-            logger.error("CRITICAL error detected — shutting down application.")
+            logger.error(
+                "CRITICAL error detected — shutting down application."
+            )
             logger.complete()
             time.sleep(0.1)
             sys.exit(1)
@@ -154,7 +161,8 @@ class InterceptHandler(logging.Handler):
 
 def setup_logging():
     """
-    Настраивает систему логирования с автоматическим форматированием трейсбеков.
+    Настраивает систему логирования с автоматическим форматированием
+    трейсбеков.
     """
 
     log_format = (

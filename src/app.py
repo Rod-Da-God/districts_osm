@@ -4,18 +4,35 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from database.core.connection import init_db
 from exc_handler import setup_exception_handlers
+from external.cache.cache import Cache
+from external.overpass.client import OverpassClient
 from middleware import setup_middlewares
 from routers import setup_routers
+
 
 logger = logging.getLogger(__name__)
 
 
-async def startup():
+async def startup() -> None:
     logger.info("START Application")
 
+    await init_db(use_create_all=True)
+    logger.info("Database initialized")
 
-async def shutdown():
+    await OverpassClient.init()
+    logger.info("OverpassClient initialized")
+
+    await Cache.init()
+    logger.info("Cache initialized")
+
+    logger.info("START Completed")
+
+
+async def shutdown() -> None:
+    await OverpassClient.close()
+    await Cache.close()
     logger.info("FINISH Application")
 
 

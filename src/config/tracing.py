@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from config import TempoSettings
 from config.registry import settings
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -50,7 +51,10 @@ INSTRUMENTORS: tuple[Instrumentor, ...] = (
 
 
 def _export_env(cfg: TempoSettings) -> None:
-    """SDK читает настройки из os.environ, а pydantic кладёт env только в свой объект"""
+    """
+    SDK читает настройки из os.environ,
+    а pydantic кладёт env только в свой объект.
+    """
     for key, value in cfg.model_dump().items():
         os.environ[key.upper()] = str(value)
 
@@ -77,7 +81,8 @@ def setup_tracing() -> None:
         trace.set_tracer_provider(provider)
     except (ImportError, ValueError):
         # ImportError - не установлены пакеты opentelemetry-*,
-        # ValueError - некорректное значение OTEL_* (например, таймаут или sampler arg)
+        # ValueError - некорректное значение OTEL_*
+        # (например, таймаут или sampler arg)
         logger.exception("Трассировка не запущена, сервис работает без неё %s")
 
     for instrumentor in INSTRUMENTORS:

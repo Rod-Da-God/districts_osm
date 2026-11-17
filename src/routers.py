@@ -2,6 +2,9 @@ import logging
 
 from fastapi import APIRouter, FastAPI, status
 
+from districts.router import router as districts_router
+
+
 logger = logging.getLogger(__name__)
 
 health_router = APIRouter()
@@ -13,7 +16,8 @@ async def health() -> None:
     Проверка готовности сервиса. Наружу отдаём только статус, без деталей.
     """
     # Сюда добавлять проверки зависимостей (БД, кэш, внешние сервисы).
-    # При провале логировать причину и поднимать HTTPException(status_code=503),
+    # При провале логировать причину и поднимать
+    # HTTPException(status_code=503),
     # текст ошибки в ответ не передавать. Пример для БД:
     #     try:
     #         await session.execute(text("SELECT 1"))
@@ -26,7 +30,7 @@ def get_routers() -> list[APIRouter]:
     """
     Возвращает список маршрутов для подключения к приложению.
     """
-    return [health_router]
+    return [health_router, districts_router]
 
 
 def setup_routers(app: FastAPI) -> None:
@@ -35,3 +39,4 @@ def setup_routers(app: FastAPI) -> None:
     """
     for router in get_routers():
         app.include_router(router)
+        logger.debug("Init router %s", getattr(router, "prefix", ""))

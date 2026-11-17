@@ -4,6 +4,7 @@ from config import settings
 from config.log_conf import setup_logging
 from config.tracing import setup_tracing
 
+
 setup_logging()
 setup_tracing()
 

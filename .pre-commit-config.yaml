@@ -1,10 +1,10 @@
 # Запуск: pre-commit run --all-files
-# Установка: pre-commit install
+# Установка: pre-commit install && pre-commit install --hook-type pre-push
 
 repos:
   # Базовые проверки
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
         name: Trim trailing whitespace
@@ -20,7 +20,7 @@ repos:
 
   # Ruff: Линтинг + форматирование (очень быстро)
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.10
+    rev: v0.17.5
     hooks:
       - id: ruff
         name: Ruff lint
@@ -29,29 +29,31 @@ repos:
         name: Ruff format
         args: [--check]
 
-  # MyPy: Типизация (локальный хук, ~30s)
+  # MyPy: Типизация (локальный хук, pre-push)
+  # language: system + прямой вызов интерпретатора venv — на Windows нет
+  # рабочего sh/bash, поэтому shell-обёртки не используются.
   - repo: local
     hooks:
       - id: mypy
         name: MyPy type check
-        entry: bash -c 'mypy src/'
+        entry: .venv/Scripts/python.exe -m mypy src
         language: system
         types: [python]
         pass_filenames: false
-        stages: [commit]
+        stages: [pre-push]
 
-  # Pytest: ЮНИТ-тесты только (локальный хук, ~30s)
+  # Pytest: ЮНИТ-тесты только (локальный хук, pre-push)
   # НЕ запускаем интеграционные тесты здесь!
+  # pytest возвращает 5, если тесты не собраны — для хука это не ошибка.
   - repo: local
     hooks:
       - id: pytest-unit
         name: Pytest unit tests
-        entry: bash -c 'pytest tests/unit -q; rc=$?; [ $rc -eq 5 ] && exit 0; exit $rc'
+        entry: .venv/Scripts/python.exe -m pytest tests/unit -q
         language: system
         types: [python]
         pass_filenames: false
-        stages: [commit]
+        stages: [pre-push]
 
-
-default_stages: [commit]
+default_stages: [pre-commit]
 fail_fast: false

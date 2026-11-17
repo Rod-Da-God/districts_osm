@@ -5,11 +5,16 @@ from typing import TypeVar
 
 from config.settings import FastAPISettings, LoggerSettings, TempoSettings
 
+
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
-SETTINGS_REGISTRY: tuple[type, ...] = (FastAPISettings, LoggerSettings, TempoSettings)
+SETTINGS_REGISTRY: tuple[type, ...] = (
+    FastAPISettings,
+    LoggerSettings,
+    TempoSettings,
+)
 
 
 class SettingsContainer:

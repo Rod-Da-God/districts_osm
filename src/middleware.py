@@ -12,6 +12,7 @@ from prometheus_client import (
 )
 from prometheus_fastapi_instrumentator import Instrumentator, metrics
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -32,7 +33,17 @@ def setup_metrics(app: FastAPI) -> None:
         registry=registry,
     ).add(
         metrics.default(
-            latency_lowr_buckets=(0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5),
+            latency_lowr_buckets=(
+                0.005,
+                0.01,
+                0.025,
+                0.05,
+                0.1,
+                0.25,
+                0.5,
+                1,
+                2.5,
+            ),
             registry=registry,
         )
     ).instrument(app).expose(app)
@@ -61,7 +72,8 @@ async def log_requests(request: Request, call_next: Callable) -> None:
     response = await call_next(request)
     process_time = time() - start_time
     logger.info(
-        f'"{request.method} {request.url.path} HTTP/{request.scope["http_version"]}" '
+        f'"{request.method} {request.url.path}'
+        f' HTTP/{request.scope["http_version"]}" '
         f'"from {getattr(request.client, "host", "unknown")} '
         f'"status - {response.status_code} time - {process_time:.3f}s"'
     )

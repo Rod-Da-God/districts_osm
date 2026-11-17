@@ -3,6 +3,7 @@ import logging
 from dotenv import find_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 ENV_FILE = find_dotenv(usecwd=False)
 logger = logging.getLogger(__name__)
 
