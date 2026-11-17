@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   ci:
-    uses: tktturik/ci-templates/.github/workflows/frontend-service.yml@main
+    uses: tktturik/ci-templates/.github/workflows/python-service.yml@main
     permissions:
       contents: read
       packages: write
@@ -21,7 +21,8 @@ jobs:
       actions: read
     with:
       image-name: botsad-districts
-      node-version: "24"
+      working-directory: .
+      python-version: "3.13"
       service-name: botsad-districts
       chart-name: botsad
       manifests-repo: botsad_cluster
