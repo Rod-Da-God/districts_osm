@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    uses: tktturik/ci-templates/.github/workflows/frontend-service.yml@main
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+      actions: read
+    with:
+      image-name: botsad-districts
+      node-version: "24"
+      service-name: botsad-districts
+      chart-name: botsad
+      manifests-repo: botsad_cluster
+      values-file: infra/charts/botsad-platform/values.yaml
+    secrets:
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      MANIFESTS_REPO_TOKEN: ${{ secrets.MANIFESTS_REPO_TOKEN }}
